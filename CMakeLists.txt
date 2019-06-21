@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.14)
 
 # Point CMake to the custom modules
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
@@ -18,3 +18,15 @@ add_custom_target(AGIStudio-Help SOURCES ${AGIStudio_HELPFILES})
 
 # Create the main program
 add_subdirectory(src)
+
+# Set up package information
+set(CPACK_PACKAGE_NAME "AGIStudio")
+set(CPACK_PACKAGE_VENDOR "CMake.org")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "AGIStudio - Sierra AGI Game Editor")
+SET(CPACK_PACKAGE_DESCRIPTION_FILE "${PROJECT_SOURCE_DIR}/README")
+set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION_FULL})
+set(CPACK_PACKAGE_INSTALL_DIRECTORY "AGIStudio")
+set(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_SOURCE_DIR}/LICENSE")
+set(CPACK_PACKAGE_EXECUTABLES "AGIStudio;AGI Studio")
+
+include(CPack)

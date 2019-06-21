@@ -114,3 +114,13 @@ source_group("Source Files" FILES ${AGIStudio_SOURCES})
 add_executable(AGIStudio WIN32 ${AGIStudio_HEADERS} ${AGIStudio_SOURCES} ${AGIStudio_RESOURCES})
 
 target_link_libraries(AGIStudio Qt5::Widgets)
+
+install(TARGETS AGIStudio RUNTIME DESTINATION .)
+
+# Deployment configuration
+set(CPACK_COMPONENT_AGISTUDIO_DISPLAY_NAME "AGIStudio")
+set(CPACK_COMPONENTS_ALL AGIStudio)
+
+# Run DeployQt tool
+include(DeployQt)
+deployqt(AGIStudio)
