@@ -12,9 +12,10 @@ project(AGIStudio
 message(STATUS "Project version: " ${PROJECT_VERSION_FULL})
 
 # Create a group for the help files
-file(GLOB AGIStudio_HELPFILES help/*.html help/*.css)
+file(GLOB AGIStudio_HELPFILES help/*.html help/*.css help/*.png)
 source_group("Help Files" FILES ${AGIStudio_HELPFILES})
 add_custom_target(AGIStudio-Help SOURCES ${AGIStudio_HELPFILES})
+install(FILES ${AGIStudio_HELPFILES} DESTINATION help)
 
 # Create the main program
 add_subdirectory(src)
