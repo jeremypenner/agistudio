@@ -46,7 +46,7 @@ where [switches] are optionally:\n\
 int main( int argc, char **argv )
 {
   char *gamedir=NULL;
-  
+
   tmp[0]=0;
 
   for(int i=1;i<argc;i++){
@@ -58,7 +58,7 @@ int main( int argc, char **argv )
       {
         if(strcmp(argv[i]+1,"help")!=0 && strcmp(argv[i]+1,"-help")!=0)
           printf( "Unknown parameter.\n\n" );
-        printf(help);
+        printf("%s", help);
         exit(-2);
       }
     }
@@ -71,7 +71,7 @@ int main( int argc, char **argv )
   game = new Game();
 
   menu->show();
-  
+
   if(gamedir){
     int err = game->open(gamedir);
     if(!err)menu->show_resources();

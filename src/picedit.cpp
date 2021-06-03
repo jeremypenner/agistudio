@@ -606,6 +606,7 @@ void PicEdit::zoom_minus()
     h = canvas->cur_h+4;
     canvas->resizeContents(w,h);
   }
+  canvas->update();
 
 }
 
@@ -620,6 +621,7 @@ void PicEdit::zoom_plus()
     h = canvas->cur_h+4;
     canvas->resizeContents(w,h);
   }
+  canvas->update();
 
 }
 
@@ -902,17 +904,15 @@ void PCanvas::setPixsize(int s)
   pixmap.resize(cur_w,cur_h);
   QPainter p(&pixmap);
   p.eraseRect(0,0,cur_w,cur_h);
-  update();
+  updatePainter(&p);
 
 }
 //*********************************************
 void PCanvas::viewportMousePressEvent(QMouseEvent* event)
 {
-  int x,y,xx,yy;
+  int x,y;
 
   viewportToContents( event->x(),  event->y(), x, y );
-  xx=x;
-  yy=y;
   x-=x0;
   y-=y0;
 
@@ -944,11 +944,9 @@ void PCanvas::viewportMousePressEvent(QMouseEvent* event)
 //*********************************************
 void PCanvas::viewportMouseMoveEvent(QMouseEvent* event)
 {
-  int x,y,xx,yy;
+  int x,y;
 
   viewportToContents( event->x(),  event->y(), x, y );
-  xx=x;
-  yy=y;
 
   x-=x0;
   y-=y0;
@@ -988,11 +986,17 @@ void PCanvas::drawContents(QPainter* p,int ,int ,int ,int )
 
 }
 
-//*********************************************
 void PCanvas::update()
 {
-
   QPainter p(&pixmap);
+  updatePainter(&p);
+}
+
+//*********************************************
+void PCanvas::updatePainter(QPainter *p)
+{
+
+  //QPainter p(&pixmap);
   int x,y;
   byte c;
   byte *data;
@@ -1004,11 +1008,11 @@ void PCanvas::update()
       for(x=0;x<MAX_W;x+=2){
         c=data[y*MAX_W+x];
         if((pic&&c==15)||(!pic&&c==4)){  //draw background instead of "empty" areas
-          p.fillRect(x*pixsize,y*pixsize,pixsize,pixsize,QColor(bgpix.pixel(x,y)));
-          p.fillRect((x+1)*pixsize,y*pixsize,pixsize,pixsize,QColor(bgpix.pixel(x+1,y)));
+          p->fillRect(x*pixsize,y*pixsize,pixsize,pixsize,QColor(bgpix.pixel(x,y)));
+          p->fillRect((x+1)*pixsize,y*pixsize,pixsize,pixsize,QColor(bgpix.pixel(x+1,y)));
         }
         else{
-          p.fillRect(x*pixsize,y*pixsize,pixsize*2,pixsize,egacolor[c]);
+          p->fillRect(x*pixsize,y*pixsize,pixsize*2,pixsize,egacolor[c]);
         }
       }
     }
@@ -1016,7 +1020,7 @@ void PCanvas::update()
   else{
     for(y=0;y<MAX_HH;y++){
       for(x=0;x<MAX_W;x+=2){
-        p.fillRect(x*pixsize,y*pixsize,pixsize*2,pixsize,egacolor[data[y*MAX_W+x]]);
+        p->fillRect(x*pixsize,y*pixsize,pixsize*2,pixsize,egacolor[data[y*MAX_W+x]]);
       }
     }
   }
@@ -1025,8 +1029,8 @@ void PCanvas::update()
   if(pri_lines){
     QPen pen;
     pen.setStyle(Qt::DashLine);
-    pen.setWidth(1);  
-    
+    pen.setWidth(1);
+
     //p.setPen(Qt::white);
     // p.setRasterOp(XorROP);
     int i=4;
@@ -1034,11 +1038,11 @@ void PCanvas::update()
     for(y=step*3;y<MAX_HH*pixsize;y+=step){
       //pen.setBrush(QColor(255, 0, 0, 127));
       pen.setBrush(egacolor[i++]);
-      p.setPen(pen);
-      p.drawLine(0,y,MAX_W*pixsize,y);
+      p->setPen(pen);
+      p->drawLine(0,y,MAX_W*pixsize,y);
       pen.setBrush(QColor(0, 0, 0, 127));
-      p.setPen(pen);
-      p.drawLine(0,y+1,MAX_W*pixsize,y+1);
+      p->setPen(pen);
+      p->drawLine(0,y+1,MAX_W*pixsize,y+1);
     }
   }
 

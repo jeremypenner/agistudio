@@ -27,7 +27,7 @@
 using namespace std;
 
 typedef struct {
-  char Filename[12];    //[*]vol.*
+  char Filename[15];    //[*]vol.*
   long Loc;             //location in vol file
   bool Exists;
 }TResourceInfo ;

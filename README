@@ -1,4 +1,4 @@
-QT AGI Studio, release 1.3.0
+QT AGI Studio, release 1.3.2
 
 About
 =====
@@ -84,6 +84,7 @@ Credits
  * Helen Zommer <helen@cc.huji.ac.il> - primary development
  * Jarno Elonen <elonen@iki.fi> - bitmap import, current maintainer
 
+ * Chris Cromer <chris@cromer.cl> - fix build for gcc 7 with 64bit
  * Nat Budin <natb@brandeis.edu> - Win32 port
  * Claudio Matsuoka <claudio@helllabs.org> - sound support
  * Peter Kelly <pmk@post.com> - the original Windows version

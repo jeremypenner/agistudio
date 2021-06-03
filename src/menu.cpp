@@ -889,7 +889,7 @@ About::About(QWidget *parent, const char *name )
   about->setTextFormat(Qt::RichText);
   about->setReadOnly(true);
   about->setText(
-    "<center><b>QT AGI studio v. 1.3.0</b><br>"
+    "<center><b>QT AGI studio v. 1.3.2</b><br>"
     "http://agistudio.sourceforge.net/<br>"
     "<br>"
     "<b>Authors:</b><br>"
@@ -897,6 +897,7 @@ About::About(QWidget *parent, const char *name )
     "Jarno Elonen (elonen@iki.fi)<br>"
     "<br>"
     "<b>and also:</b><br>"
+    "Chris Cromer (chris@cromer.cl)<br>"
     "Peter Kelly (pmk@post.com)<br>"
     "Lance Ewing (lance.e@ihug.co.nz)<br>"
     "Claudio Matsuoka (claudio@helllabs.org)<br>"

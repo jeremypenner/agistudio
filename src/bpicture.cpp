@@ -1,7 +1,7 @@
 /*
  *  QT AGI Studio :: Copyright (C) 2000 Helen Zommer
  *
- *  Almost all of the picture processing code is taken from showpic.c 
+ *  Almost all of the picture processing code is taken from showpic.c
  *  by Lance Ewing <lance.e@ihug.co.nz>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -38,7 +38,7 @@
 BPicture *ppicture;
 
 //********************************************
-//"bytemap" picture for preview - it is not going to be edited, 
+//"bytemap" picture for preview - it is not going to be edited,
 //so there is no need for the linked list and other things from the Picture class
 
 BPicture::BPicture()
@@ -414,8 +414,8 @@ void BPicture::absoluteLine(byte **data)
 ** on the pattern code.
 **************************************************************************/
 void BPicture::plotPattern(byte x, byte y)
-{ 
-  static char circles[][15] = { /* agi circle bitmaps */
+{
+  static unsigned char circles[][15] = { /* agi circle bitmaps */
     {0x80},
     {0xfc},
     {0x5f, 0xf4},
@@ -476,7 +476,7 @@ void BPicture::plotPattern(byte x, byte y)
     }
   }
 
-} 
+}
 
 
 /**************************************************************************
@@ -518,7 +518,7 @@ void BPicture::show(byte *picdata,int picsize)
   priDrawEnabled = false;
   picColour = priColour = 0;
 
-  do {    
+  do {
     action = *(data++);
     switch (action) {
     case 0xFF: stillDrawing = 0; break;
@@ -539,7 +539,7 @@ void BPicture::show(byte *picdata,int picsize)
     case 0xFA: plotBrush(&data); break;
     default: printf("Unknown picture code : %X\n", action); break;
     }
-  }while((data < (data + picsize)) && stillDrawing);   
+  }while((data < (data + picsize)) && stillDrawing);
 
 }
 //****************************************************

@@ -72,7 +72,7 @@ char  *Picture::showPos(int *code,int *val)
 int Picture::setBufPos(int inputValue)
   //set current picture buffer position to inputValue
 {
-  
+
   if ((inputValue < 0) || (inputValue > bufLen)) return 1;
 
   if (inputValue == bufLen) {
@@ -94,7 +94,7 @@ int Picture::setBufPos(int inputValue)
         bufPos++;
       }
    }
-   
+
    /* Find current action position */
    while (picPos->node < 0xF0) {
      picPos = picPos->prior;
@@ -494,8 +494,8 @@ void Picture::absoluteLine(struct picCodeNode **temp)
 ** on the pattern code.
 **************************************************************************/
 void Picture::plotPattern(byte x, byte y)
-{ 
-  static char circles[][15] = { /* agi circle bitmaps */
+{
+  static unsigned char circles[][15] = { /* agi circle bitmaps */
     {0x80},
     {0xfc},
     {0x5f, 0xf4},
@@ -556,7 +556,7 @@ void Picture::plotPattern(byte x, byte y)
     }
   }
 
-} 
+}
 
 
 /**************************************************************************
@@ -588,12 +588,12 @@ void Picture::load(byte *picdata,int picsize)
    byte nodeData;
    struct picCodeNode *temp=NULL;
    bool stillLoading=true;
-   
+
    //init link list
    picPos = picStart = picLast = NULL;
    addMode = INS_MODE;
    bufPos = bufLen = 0;
-   
+
    do {
       nodeData = *picdata++;
       picsize--;
@@ -627,19 +627,19 @@ int Picture::open(char *filename)
 {
 
   FILE *fptr = fopen(filename,"rb");
- 
+
   if(fptr==NULL){
     menu->errmes("Can't open file %s ! ",filename);
     return 1;
   }
-  
+
   struct stat buf;
   fstat(fileno(fptr),&buf);
   ResourceData.Size=buf.st_size;
   fread(ResourceData.Data,ResourceData.Size,1,fptr);
-  fclose(fptr);    
-  
-  load(ResourceData.Data,ResourceData.Size);    
+  fclose(fptr);
+
+  load(ResourceData.Data,ResourceData.Size);
   refill_pic = refill_pri = false;
   draw();
   init();
@@ -653,7 +653,7 @@ int Picture::open(int ResNum)
 
   int err = game->ReadResource(PICTURE,ResNum);
   if(!err){
-    load(ResourceData.Data,ResourceData.Size);    
+    load(ResourceData.Data,ResourceData.Size);
     refill_pic = refill_pri = false;
     draw();
     init();
@@ -672,9 +672,9 @@ int Picture::save(int ResNum)
 
 //*************************************************
 int Picture::save(char *filename)
-{    
+{
   FILE *fptr = fopen(filename,"wb");
- 
+
   if(fptr==NULL){
     menu->errmes("Can't open file %s ! ",filename);
     return 1;
@@ -691,21 +691,21 @@ void Picture::save()
 {
   byte *ptr=ResourceData.Data;
   struct picCodeNode *temp;
-    
+
   if (picStart == NULL) {   /* Black picture */
     *ptr = 0xFF; /* End of picture marker */
     ResourceData.Size=1;
     return ;
   }
-    
+
   temp = picStart;
   *ptr++ = temp->node;
-    
+
   do {
     temp = temp->next;
     *ptr++ = temp->node;
   } while (temp->next != NULL);
-  
+
   *ptr++ = 0xFF; /* End of picture marker */
   ResourceData.Size = (int)(ptr-ResourceData.Data);
 
@@ -717,7 +717,6 @@ void Picture::refill( struct picCodeNode *temp_fill_start, struct picCodeNode *t
    struct picCodeNode *temp,*picPos0,*temp_pic=0,*temp_pri=0;
    int col_pic_orig,col_pri_orig,col_pic_new,col_pri_new;
    bool picDrawEnabled_orig,priDrawEnabled_orig;
-   bool picDrawEnabled_new,priDrawEnabled_new;
    bool draw_pic_orig,draw_pri_orig,draw_pic_new,draw_pri_new;
 
    picDrawEnabled_orig=priDrawEnabled_orig=false;
@@ -794,9 +793,9 @@ void Picture::refill( struct picCodeNode *temp_fill_start, struct picCodeNode *t
      else{//!picDrawEnabled_orig
        if(col_pic!=15){
          addCode(0xf0);
-         addCode(col_pic);           
+         addCode(col_pic);
        }
-     }     
+     }
    }
 
    if((refmode|2) && priDrawEnabled0){
@@ -826,14 +825,13 @@ void Picture::refill( struct picCodeNode *temp_fill_start, struct picCodeNode *t
      else{//!priDrawEnabled_orig
        if(col_pri!=4){
          addCode(0xf2);
-         addCode(col_pri);           
+         addCode(col_pri);
        }
-     }     
+     }
    }
 
 
    temp = temp_fill_end;
-   picDrawEnabled_new=priDrawEnabled_new=false;
    col_pic_new=col_pri_new=-1;
    draw_pic_new=draw_pri_new = false;
    if(temp){
@@ -841,14 +839,12 @@ void Picture::refill( struct picCodeNode *temp_fill_start, struct picCodeNode *t
        switch(temp->node){
        case 0xf0:
          col_pic_new = (temp->next)->node;
-         picDrawEnabled_new=true;
          break;
        case 0xf1:
          col_pic_new = -2;
          break;
        case 0xf2:
          col_pri_new = (temp->next)->node;
-         priDrawEnabled_new=true;
          break;
        case 0xf3:
          col_pri_new = -2;
@@ -859,10 +855,10 @@ void Picture::refill( struct picCodeNode *temp_fill_start, struct picCodeNode *t
            if(col_pri_new==-1)draw_pri_new=true;
          }
          break;
-       }     
+       }
        temp = temp->next;
      }while(temp && (col_pic_orig==-1 || col_pri_orig==-1));
-   
+
 
      picPos = temp_fill_end;
      if((refmode|1) && picDrawEnabled0){
@@ -870,7 +866,7 @@ void Picture::refill( struct picCodeNode *temp_fill_start, struct picCodeNode *t
          if(draw_pic_new){
            if(picDrawEnabled_orig){
              addCode(0xf0);
-             addCode(col_pic_orig);                      
+             addCode(col_pic_orig);
            }
            else{
              if(col_pic!=0x15){
@@ -880,13 +876,13 @@ void Picture::refill( struct picCodeNode *temp_fill_start, struct picCodeNode *t
          }
        }
      }
-     
+
      if((refmode|2) && priDrawEnabled0){
        if(col_pri != col_pri_orig){
          if(draw_pri_new){
            if(priDrawEnabled_orig){
              addCode(0xf2);
-             addCode(col_pri_orig);                      
+             addCode(col_pri_orig);
            }
            else{
              if(col_pri!=0x4){
@@ -896,7 +892,7 @@ void Picture::refill( struct picCodeNode *temp_fill_start, struct picCodeNode *t
          }
        }
      }
-     
+
    }
    picPos = picPos0;
    draw();
@@ -908,7 +904,7 @@ void Picture::draw()
    byte action;
    struct picCodeNode *temp,*temp_fill_start,*temp_fill_end;
    int refmode;
-   bool finishedPic=false;   
+   bool finishedPic=false;
    int pC, pN;
 
    memset(picture, 15, MAX_W*MAX_H);  /* Visual screen default, white */
@@ -945,11 +941,11 @@ void Picture::draw()
 	   case 0xF5: tool=T_STEP; xCorner(&temp); break;
 	   case 0xF6: tool=T_LINE; absoluteLine(&temp); break;
 	   case 0xF7: tool=T_PEN;  relativeDraw(&temp); break;
-	   case 0xF8: tool=T_FILL; 
+	   case 0xF8: tool=T_FILL;
              temp_fill_start = temp->prior;
              fill(&temp);
-             temp_fill_end = temp;                          
-             if(refill_pic || refill_pri){               
+             temp_fill_end = temp;
+             if(refill_pic || refill_pri){
                //find which FILL filled the selected area
                refmode=0;
                if(refill_pic && picGetPixel(refill_x,refill_y)!=15){
@@ -980,20 +976,20 @@ void Picture::draw()
       patCode = pC;
       patNum = pN;
    }
-   
+
 }
 
 //**************************************************
 void Picture::init()
 {
    clear_tools();
-   
+
    priDrawEnabled = picDrawEnabled = false;
    addMode = INS_MODE;
    curp = &points0;
    points0.n=points1.n=0;
    newp=&points;
-   add_pic=add_pri=false;   
+   add_pic=add_pri=false;
 }
 
 //**************************************************
@@ -1019,7 +1015,7 @@ void Picture::addCode(byte code)   /* To the list */
    dlstore(temp);
 }
 //**************************************************
-void Picture::replaceCode(byte code) 
+void Picture::replaceCode(byte code)
 {
    struct picCodeNode *temp;
 
@@ -1121,7 +1117,7 @@ void Picture::wipe_proc()
 }
 //**************************************************
 void Picture::tool_proc(int k)
-{  
+{
   tool=k;
   numClicks=0;
   stepClicks=0;
@@ -1142,7 +1138,7 @@ void Picture::set_brush(int mode,int val)
     brushTexture = val;
     break;
   }
-  numClicks=0;  
+  numClicks=0;
 
 }
 //**************************************************
@@ -1188,13 +1184,13 @@ void Picture::choose_color(int button,int color)
 //**************************************************
 int Picture::move_action(int newX, int newY)
 {
-  int ret=0; //1 - draw "temporary" line on screen  
+  int ret=0; //1 - draw "temporary" line on screen
 
   switch(tool){
   case T_LINE:
     if(numClicks==0)break;
     normline2(clickX>>1, clickY, newX>>1, newY);
-    ret=1;    
+    ret=1;
     break;
   case T_PEN:
     if(numClicks==0)break;
@@ -1202,7 +1198,7 @@ int Picture::move_action(int newX, int newY)
     dY = ((newY) - (clickY));
     adjustDisp(&dX, &dY);
     normline2(clickX>>1, clickY,(clickX>>1)+dX, clickY+dY);
-    ret=1;    
+    ret=1;
     break;
   case T_STEP:
     if(stepClicks==0)break;
@@ -1215,7 +1211,7 @@ int Picture::move_action(int newX, int newY)
       normline2(clickX>>1, clickY, (clickX>>1)+dX, clickY+dY);
       ret=1;
       break;
-      
+
     default:
       dX = ((newX>>1) - (clickX>>1));
       dY = ((newY) - (clickY));
@@ -1255,7 +1251,7 @@ int Picture::button_action(int newX, int newY)
   }
 
   switch(tool){
-  case T_LINE:      
+  case T_LINE:
     switch (numClicks++) {
     case 0: break;
     case 1:
@@ -1263,6 +1259,7 @@ int Picture::button_action(int newX, int newY)
       addCode(clickX>>1);
       addCode(clickY);
       ret=1;
+      [[fallthrough]];
     default:
       addCode(newX>>1);
       addCode(newY);
@@ -1271,7 +1268,7 @@ int Picture::button_action(int newX, int newY)
       break;
     }
     clickX = newX;
-    clickY = newY;      
+    clickY = newY;
     curp = &points0;
     points0.n=points1.n=0;
     break;
@@ -1288,6 +1285,7 @@ int Picture::button_action(int newX, int newY)
       addCode(0xF7);
       addCode(clickX>>1);
       addCode(clickY);
+      [[fallthrough]];
     default:
       if (dX < 0) disp = (0x80 | ((((-1)*dX)-0) << 4));
       else disp = (dX << 4);
@@ -1300,7 +1298,7 @@ int Picture::button_action(int newX, int newY)
       clickX = clickX + (dX<<1);
       clickY = clickY + dY;
       break;
-    }      
+    }
     curp = &points0;
     points0.n=points1.n=0;
     break;
@@ -1357,10 +1355,10 @@ int Picture::button_action(int newX, int newY)
     stepClicks++;
     curp = &points0;
     points0.n=points1.n=0;
-    break;      
+    break;
   case T_FILL:
     if(!(okToFill(newX>>1, newY))){
-      status(0);      
+      status(0);
       refill_x = newX>>1;
       refill_y = newY;
       refill_pic = refill_pri = true;
@@ -1389,7 +1387,7 @@ int Picture::button_action(int newX, int newY)
       addCode(0xFA);
     }
     numClicks++;
-      
+
     patCode = brushSize;
     if (brushShape == SQUARE) patCode |= 0x10;
     if (brushTexture == SPRAY) patCode |= 0x20;
@@ -1456,7 +1454,7 @@ void Picture::putpix2(int x,int y)
     }
     x>>=1;
   }
-  else{  //save the pixels 
+  else{  //save the pixels
     curp->p[curp->n].x=x;
     curp->p[curp->n].y=y;
     curp->p[curp->n].c=pptr[y*MAX_W+(x<<1)];
@@ -1489,7 +1487,7 @@ void Picture::normline2(int x1, int y1, int x2, int y2)
       for (x=x1; x!=x2; x+=addX) {
 	 putpix2(round(x, addX), round(y, addY));
 	 y+=addY;
-      }      
+      }
       putpix2(x2,y2);
    }
    else {
@@ -1520,12 +1518,12 @@ void Picture::viewData(TStringList *data)
      data->add("ff");
      return ;
    }
-    
+
    temp = picStart;
    tmp[0]=0;
    for(temp=picStart;temp!=NULL;temp=temp->next){
      c = temp->node;
-     if(c>=0xf0 && tmp[0]){       
+     if(c>=0xf0 && tmp[0]){
        data->add(tmp);
        sprintf(tmp,"%02x ",c);
      }
@@ -1539,7 +1537,7 @@ void Picture::viewData(TStringList *data)
      data->add(tmp);
    }
    data->add("ff");
-  
+
 }
 //***************************************************
 

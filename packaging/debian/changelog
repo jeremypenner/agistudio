@@ -1,3 +1,15 @@
+agistudio (1.3.2-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Chris Cromer <chris@cromer.cl>  Sun, 19 Apr 2020 15:12:00 +0300
+
+agistudio (1.3.1-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Chris Cromer <chris@cromer.cl>  Thu, 09 May 2019 19:38:00 +0300
+
 agistudio (1.3.0-1) unstable; urgency=low
 
   * New upstream release.
@@ -27,7 +39,7 @@ agistudio (1.2.3-1) unstable; urgency=low
 
 agistudio (1.2.2-1) unstable; urgency=low
 
-  * New upstream release. (Closes: #358291) 
+  * New upstream release. (Closes: #358291)
 
  -- Jarno Elonen <elonen@debian.org>  Thu,  22 Mar 2006 21:53:23 +0300
 

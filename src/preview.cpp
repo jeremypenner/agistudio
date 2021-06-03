@@ -604,7 +604,7 @@ void PreviewView::draw(int ResNum)
 //*****************************************
 void PreviewView::show_description()
 {
-  int x,y,w,h,W,H,n;
+  int y,w,h,W,H,n;
   unsigned int maxcol;
 
   preview->description->hide();
@@ -614,7 +614,6 @@ void PreviewView::show_description()
 
   W=preview->width();
   H=preview->height();
-  x=this->x();
   y=this->y();
   preview->description->setGeometry(10,y+h+10,W-20,H-(y+h+20));
 

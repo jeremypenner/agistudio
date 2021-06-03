@@ -268,7 +268,7 @@ int copy(char *src,char *dest)
       return 1;
     }
   }
-  
+
   fclose(filew);
   fclose(filer);
   return 0;
@@ -302,8 +302,8 @@ int Game::from_template(string name)
   struct _finddata_t c_file;
   long hFile;
   if ((hFile = _findfirst(tmp, &c_file)) != -1L) do {
-    sprintf(tmp2,"%s/%s",templatedir.c_str(),c_file.name);
-    cfilename = tmp2;
+    sprintf(tmp,"%s/%s",templatedir.c_str(),c_file.name);
+    cfilename = tmp;
 #else
   glob_t globbuf;
   glob(tmp, 0, NULL, &globbuf);
@@ -335,8 +335,8 @@ int Game::from_template(string name)
   sprintf(tmp,"%s/src/*",templatedir.c_str());
 #ifdef _WIN32
   if ((hFile = _findfirst(tmp, &c_file)) != -1L) do {
-    sprintf(tmp2,"%s/src/%s",templatedir.c_str(),c_file.name);
-    cfilename = tmp2;
+    sprintf(tmp,"%s/src/%s",templatedir.c_str(),c_file.name);
+    cfilename = tmp;
 #else
   glob(tmp, 0, NULL, &globbuf);
   for(i=0;i<(int)globbuf.gl_pathc;i++){  //copy template src subdirectory
@@ -1180,10 +1180,10 @@ static unsigned int input_code(byte **input)
 static void expand(byte *input, byte *output, int fileLength)
 {
    int next_code, new_code, old_code;
-   int character, /* counter=0, index, */ BITSFull /*, i */;
+   int character /* counter=0, index, */ /*, i */;
    byte *string, *endAddr;
 
-   BITSFull = setBITS(START_BITS);  /* Starts at 9-bits */
+   setBITS(START_BITS);  /* Starts at 9-bits */
    next_code = 257;                 /* Next available code to define */
 
    endAddr = (byte *)((long)output + (long)fileLength);
@@ -1196,7 +1196,7 @@ static void expand(byte *input, byte *output, int fileLength)
 
       if (new_code == 0x100) {      /* Code to "start over" */
 	      next_code = 258;
-	      BITSFull = setBITS(START_BITS);
+	      setBITS(START_BITS);
 	      old_code = input_code(&input);
 	      character = old_code;
          *output++ = (char)character;
@@ -1216,7 +1216,7 @@ static void expand(byte *input, byte *output, int fileLength)
             *output++ = *string--;
 
 	      if (next_code > MAX_CODE)
-	         BITSFull = setBITS(BITS + 1);
+	         setBITS(BITS + 1);
 
          prefix_code[next_code] = old_code;
 	      append_character[next_code] = character;

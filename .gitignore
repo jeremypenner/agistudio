@@ -1,0 +1,4 @@
+src/Makefile
+src/*.o
+src/agistudio
+src/moc_*

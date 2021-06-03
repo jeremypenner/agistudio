@@ -638,7 +638,6 @@ void Logic::ReadArgs(bool CommandIsIf, byte CmdNum)
   string ThisMessage;
   int ThisMessageNum;
   string ThisInvObjectName;
-  int ThisInvObjectNum;
   int i;
 
   SkipSpaces();
@@ -745,7 +744,6 @@ void Logic::ReadArgs(bool CommandIsIf, byte CmdNum)
         else{
           for(i=0;i<objlist->ItemNames.num;i++){
             if(objlist->ItemNames.at(i)==ThisInvObjectName){
-              ThisInvObjectNum = i;
               WriteByte(i);
               break;
             }

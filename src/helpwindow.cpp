@@ -58,7 +58,7 @@ HelpWindow::HelpWindow( const QString& home_, const QString& _path, QWidget* par
 
 
   Q3StyleSheetItem* style;
-  
+
   // Modify the application-wide default style sheet to handle
   // some extra HTML gracefully.
   //
@@ -110,7 +110,7 @@ HelpWindow::HelpWindow( const QString& home_, const QString& _path, QWidget* par
     backwardId = go->insertItem( QPixmap(back),
                                  "&Backward", browser, SLOT( backward() ),
                                  Qt::ALT | Qt::Key_Left );
-    forwardId = go->insertItem( QPixmap(forward),
+    forwardId = go->insertItem( QPixmap(forward_icon),
                                 "&Forward", browser, SLOT( forward() ),
                                 Qt::ALT | Qt::Key_Right );
     go->insertItem( QPixmap(home), "&Home", browser, SLOT( home() ) );
@@ -152,7 +152,7 @@ HelpWindow::HelpWindow( const QString& home_, const QString& _path, QWidget* par
     button = new QToolButton( QPixmap(back), "Backward", "", browser, SLOT(backward()), toolbar );
     connect( browser, SIGNAL( backwardAvailable(bool) ), button, SLOT( setEnabled(bool) ) );
     button->setEnabled( FALSE );
-    button = new QToolButton( QPixmap(forward), "Forward", "", browser, SLOT(forward()), toolbar );
+    button = new QToolButton( QPixmap(forward_icon), "Forward", "", browser, SLOT(forward()), toolbar );
     connect( browser, SIGNAL( forwardAvailable(bool) ), button, SLOT( setEnabled(bool) ) );
     button->setEnabled( FALSE );
     button = new QToolButton( QPixmap(home), "Home", "", browser, SLOT(home()), toolbar );
@@ -365,7 +365,7 @@ void HelpWindow::hideEvent( QHideEvent * )
 //*********************************************
 void HelpWindow::showEvent( QShowEvent * )
 {
- 
+
   if(window_list && window_list->isVisible())window_list->draw();
 
 }

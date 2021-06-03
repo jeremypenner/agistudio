@@ -1,6 +1,7 @@
 TEMPLATE = app
 CONFIG	 = qt warn_on release thread
 #CONFIG  = qt warn_on debug thread
+#CONFIG += static # win32 static linking
 # DEFINES += QT_DLL QT_THREAD_SUPPORT # win32
 QMAKE_CXXFLAGS += -Wno-unused-result
 HEADERS	 = agicommands.h \

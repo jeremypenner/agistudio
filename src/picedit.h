@@ -80,6 +80,7 @@ public:
     void load_bg(char *filename);
     void draw(int ResNum);
     void update();
+    void updatePainter(QPainter *p);
     void setSize(int w,int h);
     void setPixsize(int pixsize);
   protected:

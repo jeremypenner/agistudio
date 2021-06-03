@@ -1,9 +1,9 @@
 /*
  *  QT AGI Studio :: Copyright (C) 2000 Helen Zommer
  *
- *  Almost all of this code was adapted from the Windows AGI Studio 
+ *  Almost all of this code was adapted from the Windows AGI Studio
  *  developed by Peter Kelly.
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
@@ -75,7 +75,7 @@ static byte ReadByte(void)
 static short ReadLSMSWord(void)
 {
   byte MSbyte,LSbyte;
-  
+
   LSbyte = ReadByte();
   MSbyte = ReadByte();
 
@@ -133,7 +133,7 @@ void Logic::ReadMessages(void)
 }
 //***************************************************
 void Logic::DisplayMessages(void)
-{  
+{
   int i;
 
   if(game->show_all_messages){
@@ -149,7 +149,7 @@ void Logic::DisplayMessages(void)
      for(i=1;i<=255;i++){
        if (MessageExists[i] && !MessageUsed[i]){
          OutputText.append("#message " + IntToStr(i)+" \""+Messages[i]+"\"\n");
-       }       
+       }
      }
   }
 
@@ -165,7 +165,7 @@ int Logic::FindLabels_ReadIfs(void)
     if(CurByte == 0xFC)CurByte = ReadByte(); // we may have 2 0xFCs in a row, e.g. (a || b) && (c || d)
     if(CurByte == 0xFD)CurByte = ReadByte();
 
-    if (CurByte > 0 && CurByte <= NumTestCommands){      
+    if (CurByte > 0 && CurByte <= NumTestCommands){
       ThisCommand = CurByte;
       if (ThisCommand == 14){ // said command
         NumSaidArgs = ReadByte();
@@ -188,7 +188,7 @@ int Logic::FindLabels_ReadIfs(void)
       BlockEnd[BlockDepth] = BlockLength[BlockDepth] + ResPos;
       if (BlockEnd[BlockDepth] > BlockEnd[BlockDepth-1]){
         sprintf(tmp,"Block too long (%d bytes longer than rest of previous block)",BlockEnd[BlockDepth]-BlockEnd[BlockDepth-1]);
-        ErrorOccured=true; 
+        ErrorOccured=true;
         ErrorList.append(string(tmp)+"\n");
       }
       break;
@@ -253,12 +253,12 @@ int Logic::FindLabels(void)
           ErrorList.append(tmp);
           ErrorOccured=true;
           break;
-        } 
+        }
         if (LabelIndex.Data[LabelLoc] == 0){
           NumLabels++;
           LabelIndex.Data[LabelLoc] = NumLabels;
         }
-      }      
+      }
     }
     else{
       sprintf(tmp,"Unknown command (%d)",CurByte);
@@ -305,7 +305,7 @@ void Logic::AddArg(byte Arg, byte ArgType)
             ThisMessage = "";
           }
         }while(ThisMessage.length()>0);
-      }        
+      }
       else if(ShowNonExistingValues){
         ThisLine += ArgTypePrefix[atMsg] + IntToStr(Arg);
       }
@@ -326,7 +326,7 @@ void Logic::AddArg(byte Arg, byte ArgType)
       else{
         sprintf(tmp,"Unknown inventory item (%d)\n",Arg);
         ErrorList.append(tmp);
-        ErrorOccured=true;        
+        ErrorOccured=true;
       }
       break;
     default:
@@ -360,21 +360,40 @@ void Logic::AddSpecialSyntaxCommand(void)
     // assignv
   case 0x04: ThisLine += "v"+IntToStr(arg1)+" = v"+IntToStr(ReadByte()); break;
     // addn
-  case 0x05: if (SpecialSyntaxType == 0)
-    ThisLine += "v"+IntToStr(arg1)+" = v"+IntToStr(arg1)+" + "+IntToStr(ReadByte());
-  else ThisLine += "v"+IntToStr(arg1)+" += "+IntToStr(ReadByte()); break;
+  case 0x05:
+    if (SpecialSyntaxType == 0) {
+      ThisLine += "v"+IntToStr(arg1)+" = v"+IntToStr(arg1)+" + "+IntToStr(ReadByte());
+    }
+    else {
+      ThisLine += "v"+IntToStr(arg1)+" += "+IntToStr(ReadByte());
+    }
+    break;
   // addv
-  case 0x06: if (SpecialSyntaxType == 0)
-    ThisLine += "v"+IntToStr(arg1)+" = v"+IntToStr(arg1)+" + v"+IntToStr(ReadByte());
-  else ThisLine += "v"+IntToStr(arg1)+" += v"+IntToStr(ReadByte()); break;
+  case 0x06:
+    if (SpecialSyntaxType == 0)
+      ThisLine += "v"+IntToStr(arg1)+" = v"+IntToStr(arg1)+" + v"+IntToStr(ReadByte());
+    else {
+      ThisLine += "v"+IntToStr(arg1)+" += v"+IntToStr(ReadByte());
+    }
+    break;
   // subn
-  case 0x07: if (SpecialSyntaxType == 0)
-    ThisLine += "v"+IntToStr(arg1)+" = v"+IntToStr(arg1)+" - "+IntToStr(ReadByte());
-  else ThisLine += "v"+IntToStr(arg1)+" -= "+IntToStr(ReadByte()); break;
+  case 0x07:
+    if (SpecialSyntaxType == 0) {
+      ThisLine += "v"+IntToStr(arg1)+" = v"+IntToStr(arg1)+" - "+IntToStr(ReadByte());
+    }
+    else {
+      ThisLine += "v"+IntToStr(arg1)+" -= "+IntToStr(ReadByte());
+    }
+    break;
   // subv
-  case 0x08: if (SpecialSyntaxType == 0)
-    ThisLine += "v"+IntToStr(arg1)+" = v"+IntToStr(arg1)+" - v"+IntToStr(ReadByte());
-  else ThisLine += "v"+IntToStr(arg1)+" -= v"+IntToStr(ReadByte()); break;
+  case 0x08:
+    if (SpecialSyntaxType == 0) {
+      ThisLine += "v"+IntToStr(arg1)+" = v"+IntToStr(arg1)+" - v"+IntToStr(ReadByte());
+    }
+    else {
+      ThisLine += "v"+IntToStr(arg1)+" -= v"+IntToStr(ReadByte());
+    }
+    break;
   // lindirectv
   case 0x09: ThisLine += "*v"+IntToStr(arg1)+" = v"+IntToStr(ReadByte()); break;
     // rindirect
@@ -382,21 +401,41 @@ void Logic::AddSpecialSyntaxCommand(void)
     // lindirectn
   case 0x0B: ThisLine += "*v"+IntToStr(arg1)+" = "+IntToStr(ReadByte()); break;
     // mul.n
-  case 0xA5: if (SpecialSyntaxType == 0)
-    ThisLine += "v"+IntToStr(arg1)+" = v"+IntToStr(arg1)+" * "+IntToStr(ReadByte());
-  else ThisLine += "v"+IntToStr(arg1)+" *= "+IntToStr(ReadByte()); break;
+  case 0xA5:
+    if (SpecialSyntaxType == 0) {
+      ThisLine += "v"+IntToStr(arg1)+" = v"+IntToStr(arg1)+" * "+IntToStr(ReadByte());
+    }
+    else {
+      ThisLine += "v"+IntToStr(arg1)+" *= "+IntToStr(ReadByte());
+    }
+    break;
   // mul.v
-  case 0xA6: if (SpecialSyntaxType == 0)
-    ThisLine += "v"+IntToStr(arg1)+" = v"+IntToStr(arg1)+" * v"+IntToStr(ReadByte());
-  else ThisLine += "v"+IntToStr(arg1)+" *= v"+IntToStr(ReadByte()); break;
+  case 0xA6:
+    if (SpecialSyntaxType == 0) {
+      ThisLine += "v"+IntToStr(arg1)+" = v"+IntToStr(arg1)+" * v"+IntToStr(ReadByte());
+    }
+    else {
+      ThisLine += "v"+IntToStr(arg1)+" *= v"+IntToStr(ReadByte());
+    }
+    break;
   // div.n
-  case 0xA7: if (SpecialSyntaxType == 0)
-    ThisLine += "v"+IntToStr(arg1)+" = v"+IntToStr(arg1)+" / "+IntToStr(ReadByte());
-  else ThisLine += "v"+IntToStr(arg1)+" /= "+IntToStr(ReadByte()); break;
+  case 0xA7:
+    if (SpecialSyntaxType == 0) {
+      ThisLine += "v"+IntToStr(arg1)+" = v"+IntToStr(arg1)+" / "+IntToStr(ReadByte());
+    }
+    else {
+      ThisLine += "v"+IntToStr(arg1)+" /= "+IntToStr(ReadByte());
+    }
+    break;
   // div.v
-  case 0xA8: if (SpecialSyntaxType == 0)
-    ThisLine += "v"+IntToStr(arg1)+" = v"+IntToStr(arg1)+" / v"+IntToStr(ReadByte());
-  else ThisLine += "v"+IntToStr(arg1)+" /= v"+IntToStr(ReadByte()); break;
+  case 0xA8:
+    if (SpecialSyntaxType == 0) {
+      ThisLine += "v"+IntToStr(arg1)+" = v"+IntToStr(arg1)+" / v"+IntToStr(ReadByte());
+    }
+    else {
+      ThisLine += "v"+IntToStr(arg1)+" /= v"+IntToStr(ReadByte());
+    }
+    break;
   }
 
 }
@@ -541,13 +580,13 @@ void Logic::ReadIfs(void)
         BlockDepth++;
         BlockIsIf[BlockDepth] = true;
         BlockLength[BlockDepth] = ReadLSMSWord();
-        BlockEnd[BlockDepth] = BlockLength[BlockDepth] + ResPos;        
+        BlockEnd[BlockDepth] = BlockLength[BlockDepth] + ResPos;
         if (BlockEnd[BlockDepth] > BlockEnd[BlockDepth-1]){
           sprintf(tmp,"Block too long (%d bytes longer than rest of previous block)\n",BlockEnd[BlockDepth]-BlockEnd[BlockDepth-1]);
           ErrorList.append(tmp);
           ErrorOccured=true;
           break;
-        }        
+        }
       }
       OutputText.append(ThisLine+"\n");
       ThisLine = MultStr("  ",BlockDepth);
@@ -570,15 +609,15 @@ int Logic::decode(int ResNum)
   sprintf(tmp,"%s/words.tok",game->dir.c_str());
   ret = wordlist->read(tmp);
   if(ret)return 1;
- 
-  sprintf(tmp,"%s/object",game->dir.c_str());  
+
+  sprintf(tmp,"%s/object",game->dir.c_str());
   ret = objlist->read(tmp,false);
   if(ret)return 1;
   objlist->ItemNames.toLower();
   // words already in lower case in file so we don't need to convert them
   for(i=0;i<objlist->ItemNames.num;i++){
     if(objlist->ItemNames.at(i).find_first_of("\"")==string::npos)continue;
-    //replace " with \" 
+    //replace " with \"
     char *ptr=(char *)objlist->ItemNames.at(i).c_str();
     for(j=0;*ptr;ptr++){
       if(*ptr=='"'){
@@ -590,7 +629,7 @@ int Logic::decode(int ResNum)
     tmp[j]=0;
     objlist->ItemNames.replace(i,tmp);
   }
-  
+
   ret = game->ReadResource(LOGIC,ResNum);
   if(ret)return 1;
 
@@ -623,7 +662,7 @@ int Logic::decode(int ResNum)
     else if(CurByte <= NumAGICommands){
       ThisCommand = CurByte;
       ThisLine = MultStr("  ",BlockDepth);
-      if (game->show_special_syntax && (ThisCommand>=0x01 && ThisCommand<=0x0B)||(ThisCommand>=0xA5&&ThisCommand<=0xA8))AddSpecialSyntaxCommand();
+      if (game->show_special_syntax && ((ThisCommand>=0x01 && ThisCommand<=0x0B)||(ThisCommand>=0xA5&&ThisCommand<=0xA8)))AddSpecialSyntaxCommand();
       else{
         ThisLine+=(string(AGICommand[ThisCommand].Name) + "(");
         ArgsStart = ThisLine.length();

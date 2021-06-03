@@ -10,6 +10,7 @@ Upstream authors:
   Peter Kelly <ptrkelly@ozemail.com.au> (orig. Agistudio in Pascal)
   Lance Ewing (the DOS Picedit)
   Nat Budin <natb@brandeis.edu> (Win32 fixes)
+  Chris Cromer <chris@cromer.cl> (gcc7 and 64bit fixes)
 
 Upstream copyright:
   2000, 2002, 2003 Helen Zommer
