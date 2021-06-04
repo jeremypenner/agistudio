@@ -21,18 +21,15 @@
 #ifndef WUTIL_H
 #define WUTIL_H
 
-#include <qwidget.h>
-#include <qlabel.h>
-#include <qpushbutton.h>
-#include <qlayout.h>
-#include <q3listbox.h>
-#include <qmessagebox.h>
-#include <qlineedit.h> 
-#include <qradiobutton.h> 
-#include <q3buttongroup.h> 
-//Added by qt3to4:
+#include <QWidget>
+#include <QLabel>
+#include <QPushButton>
+#include <QLayout>
+#include <QMessageBox>
+#include <QLineEdit>
 #include <QPaintEvent>
 #include <QMouseEvent>
+
 #include <vector>
 
 #include "global.h"
@@ -42,7 +39,7 @@ class AskNumber : public QDialog
 {
     Q_OBJECT
 public:
-    AskNumber( QWidget *parent=0, const char *name=0,const char *caption=0,const char *prompt=0);
+    AskNumber(QWidget *parent = 0, const char *name = 0, const char *caption = 0, const char *prompt = 0);
     QLineEdit *num;
 };
 
@@ -51,7 +48,7 @@ class AskText : public QDialog
 {
     Q_OBJECT
 public:
-    AskText( QWidget *parent=0, const char *name=0,const char *caption=0,const char *prompt=0);
+    AskText(QWidget *parent = 0, const char *name = 0, const char *caption = 0, const char *prompt = 0);
     QLineEdit *text;
 };
 
@@ -60,10 +57,10 @@ class Palette : public QWidget
 {
     Q_OBJECT
 public:
-    Palette( QWidget *parent=0, const char *name=0);
+    Palette(QWidget *parent = 0, const char *name = 0);
     void paintEvent(class QPaintEvent *);
-    void mousePressEvent(QMouseEvent* event);
-    int left,right;
+    void mousePressEvent(QMouseEvent *event);
+    int left, right;
 };
 
 //*****************************************************

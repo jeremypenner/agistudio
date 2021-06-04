@@ -21,17 +21,16 @@
 #ifndef LOGEDIT_H
 #define LOGEDIT_H
 
-#include <qwidget.h>
-#include <qlabel.h>
-#include <qpushbutton.h>
-#include <qlayout.h>
+#include <QWidget>
+#include <QLabel>
+#include <QPushButton>
+#include <QLayout>
 #include <qnamespace.h>
-#include <qmessagebox.h>
-#include <q3multilineedit.h> 
-#include <qevent.h> 
-#include <qstatusbar.h>
-#include <qcheckbox.h>
-//Added by qt3to4:
+#include <QMessageBox>
+#include <QTextEdit>
+#include <QEvent>
+#include <QStatusBar>
+#include <QCheckBox>
 #include <QResizeEvent>
 #include <QShowEvent>
 #include <QHideEvent>
@@ -48,18 +47,18 @@ class FindEdit : public QWidget
 {
     Q_OBJECT
 public:
-    FindEdit( QWidget *parent=0, const char *name=0, Q3MultiLineEdit *edit=0,QStatusBar *s=0);
+    FindEdit(QWidget *parent = 0, const char *name = 0, QTextEdit *edit = 0, QStatusBar *s = 0);
     QStatusBar *status;
-    QPushButton *find_first,*find_next,*cancel;
-    QRadioButton *up,*down,*start,*current;
-    QCheckBox *match_whole,*match_case;
+    QPushButton *find_first, *find_next, *cancel;
+    QRadioButton *up, *down, *start, *current;
+    QCheckBox *match_whole, *match_case;
     QLineEdit *find_field;
-    Q3MultiLineEdit *editor;
+    QTextEdit *editor;
     int curline;
 public slots:
-      void find_first_cb();
-      void find_next_cb();
-      void cancel_cb();
+    void find_first_cb();
+    void find_next_cb();
+    void cancel_cb();
 };
 
 class LogicSyntaxHL;
@@ -69,20 +68,20 @@ class LogEdit : public QWidget
 {
     Q_OBJECT
 public:
-    LogEdit( QWidget *parent=0, const char *name=0,int winnum=0,ResourcesWin *res=0, bool readonly=false );
-    Q3MultiLineEdit *editor;
+    LogEdit(QWidget *parent = 0, const char *name = 0, int winnum = 0, ResourcesWin *res = 0, bool readonly = false);
+    QTextEdit *editor;
     FindEdit *findedit;
     ResourcesWin *resources_win;
     QStatusBar *status;
     RoomGen *roomgen;
     Logic *logic;
     LogicSyntaxHL *syntax_hl;
-    string filename;
+    std::string filename;
     unsigned int maxcol;
     int open();
     int open(int ResNum);
 public slots:
-      void new_room();
+    void new_room();
     void read_logic();
     void save_logic();
     void save_as();
@@ -97,8 +96,8 @@ public slots:
     void goto_cb();
     void context_help();
     void command_help();
-    void update_line_num( int para, int pos );
- protected:
+    void update_line_num(int para, int pos);
+protected:
     int LogicNum;
     int winnum;
     bool changed;
@@ -107,10 +106,10 @@ public slots:
     void deinit();
     void delete_file(int num);
     void getmaxcol();
-    void resizeEvent( QResizeEvent * );
-    void closeEvent( QCloseEvent *e );
-    void showEvent(  QShowEvent * );
-    void hideEvent(  QHideEvent * );    
+    void resizeEvent(QResizeEvent *);
+    void closeEvent(QCloseEvent *e);
+    void showEvent(QShowEvent *);
+    void hideEvent(QHideEvent *);
 };
 
 //a simple text editor
@@ -118,11 +117,11 @@ class TextEdit : public QWidget
 {
     Q_OBJECT
 public:
-    TextEdit( QWidget *parent=0, const char *name=0,int winnum=0);
-    Q3MultiLineEdit *editor;
+    TextEdit(QWidget *parent = 0, const char *name = 0, int winnum = 0);
+    QTextEdit *editor;
     FindEdit *findedit;
     QStatusBar *status;
-    string filename;
+    std::string filename;
     int open(char *filename);
     void save(const char *filename);
 public slots:
@@ -133,13 +132,13 @@ public slots:
     void save_as();
     void find_cb();
     void find_again();
- protected:
-    string OutputText;
+protected:
+    std::string OutputText;
     int winnum;
     bool changed;
-    void closeEvent( QCloseEvent *e );
-    void showEvent(  QShowEvent * );
-    void hideEvent(  QHideEvent * );    
+    void closeEvent(QCloseEvent *e);
+    void showEvent(QShowEvent *);
+    void hideEvent(QHideEvent *);
     void deinit();
 };
 

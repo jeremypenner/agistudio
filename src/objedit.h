@@ -21,19 +21,17 @@
 #ifndef OBJEDIT_H
 #define OBJEDIT_H
 
-#include <qwidget.h>
-#include <qlabel.h>
-#include <qpushbutton.h>
-#include <qlayout.h>
-#include <q3listbox.h>
-#include <qmessagebox.h>
-#include <qlineedit.h> 
-#include <qevent.h>
-//Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QWidget>
+#include <QLabel>
+#include <QPushButton>
+#include <QLayout>
+#include <QMessageBox>
+#include <QLineEdit>
+#include <QEvent>
 #include <QShowEvent>
 #include <QHideEvent>
 #include <QCloseEvent>
+#include <QListWidget>
 
 #include "util.h"
 #include "object.h"
@@ -43,39 +41,38 @@ class ObjEdit : public QWidget
 {
     Q_OBJECT
 public:
-    ObjEdit( QWidget *parent=0, const char *name=0, int winnum=0);
+    ObjEdit(QWidget *parent = 0, const char *name = 0, int winnum = 0);
     void open();
 public slots:
-      void open_file();
-      void save_file();
-      void save_as_file();
-      void new_file();
-      void select_object(int);
-      void add_cb();
-      void del_cb();
-      void left_cb();
-      void right_cb();
-      void num_cb();
-      void name_cb();
-      void encrypted_cb();
- protected:
+    void open_file();
+    void save_file();
+    void save_as_file();
+    void new_file();
+    void select_object();
+    void add_cb();
+    void del_cb();
+    void left_cb();
+    void right_cb();
+    void num_cb();
+    void name_cb();
+protected:
     int winnum;
-    Q3ListBox *list;
-    QLineEdit *name,*num;
-    QPushButton *add,*del,*left,*right;
-    Q3PopupMenu *options;
-    int encrypted;
+    QListWidget *list;
+    QLineEdit *objname, *num;
+    QPushButton *add, *del, *left, *right;
+    QMenu *options;
+    QAction *encrypted;
     int CurObject;
     bool changed;
-    string filename;
+    std::string filename;
     ObjList *objlist;
 
     void open(char *);
     void save(char *);
     void deinit();
-    void closeEvent( QCloseEvent *e );
-    void showEvent(  QShowEvent * );
-    void hideEvent(  QHideEvent * );    
+    void closeEvent(QCloseEvent *e);
+    void showEvent(QShowEvent *);
+    void hideEvent(QHideEvent *);
 };
 
 #endif

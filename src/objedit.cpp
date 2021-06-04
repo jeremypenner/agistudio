@@ -31,333 +31,284 @@
 #include <sys/stat.h>
 #include <stdlib.h>
 #include <ctype.h>
-#include <qapplication.h>
-#include <q3filedialog.h> 
-//Added by qt3to4:
-#include <Q3HBoxLayout>
+#include <QApplication>
 #include <QCloseEvent>
-#include <Q3BoxLayout>
 #include <QShowEvent>
 #include <QLabel>
-#include <Q3PopupMenu>
 #include <QHideEvent>
-#include <Q3VBoxLayout>
 
 
 //*****************************************
 //Inventory object editor
-ObjEdit::ObjEdit( QWidget *parent, const char *nam, int win_num)
-    : QWidget( parent, nam, Qt::WDestructiveClose )
+ObjEdit::ObjEdit(QWidget *parent, const char *name, int win_num)
+    : QWidget(parent)
 {
-  
-  setCaption("Object Editor");
-  setMinimumSize(400,400);
+    setAttribute(Qt::WA_DeleteOnClose);
+    setWindowTitle("Object Editor");
+    setMinimumSize(400, 400);
 
-  winnum = win_num;
-  objlist = new ObjList();
+    winnum = win_num;
+    objlist = new ObjList();
 
-  Q3PopupMenu *file = new Q3PopupMenu( this );
-  Q_CHECK_PTR( file );
+    QMenu *file = new QMenu(this);
+    Q_CHECK_PTR(file);
+    file->setTitle("&File");
+    file->addAction("&New", this, SLOT(new_file()));
+    file->addAction("&Open", this, SLOT(open_file()));
+    file->addAction("&Save", this, SLOT(save_file()));
+    file->addAction("Save &As", this, SLOT(save_as_file()));
+    file->addSeparator();
+    file->addAction("&Close", this, SLOT(close()));
 
-  file->insertItem( "New", this, SLOT(new_file()) );
-  file->insertItem( "Open", this, SLOT(open_file()) );
-  file->insertItem( "Save", this, SLOT(save_file()) );
-  file->insertItem( "Save As", this, SLOT(save_as_file()) );
-  file->insertSeparator();
-  file->insertItem( "Close", this, SLOT(close()) );
+    options = new QMenu(this);
+    Q_CHECK_PTR(options);
+    options->setTitle("&Options");
+    encrypted = options->addAction("&Encrypted");
+    encrypted->setCheckable(true);
+    encrypted->setChecked(true);
 
-  options = new Q3PopupMenu( this );
-  Q_CHECK_PTR( options );
-  encrypted = options->insertItem( "Encrypted", this, SLOT(encrypted_cb()) );
-  options->setItemChecked(encrypted,true);  
+    QMenuBar *menu = new QMenuBar(this);
+    Q_CHECK_PTR(menu);
+    menu->addMenu(file);
+    menu->addMenu(options);
 
-  QMenuBar *menu = new QMenuBar(this);  
-  Q_CHECK_PTR( menu );
-  menu->insertItem( "File", file );
-  menu->insertItem( "Options", options );
-  menu->setSeparator( QMenuBar::InWindowsStyle );
+    QBoxLayout *all =  new QVBoxLayout(this);
+    all->setMenuBar(menu);
 
-  Q3BoxLayout *all =  new Q3VBoxLayout(this,14);  
-  all->setMenuBar(menu);    
-  
-  list = new Q3ListBox(this);
-  list->setMinimumSize(400,400);
-  list->setColumnMode (1);
+    list = new QListWidget(this);
+    list->setMinimumSize(400, 400);
 
-  connect( list, SIGNAL(highlighted(int)), SLOT(select_object(int)) );
-  connect( list, SIGNAL(selected(int)), SLOT(select_object(int)) );
-  all->addWidget(list);
+    connect(list, SIGNAL(itemSelectionChanged()), this, SLOT(select_object()));
+    all->addWidget(list);
 
-  name = new QLineEdit(this);  
-  connect( name, SIGNAL(returnPressed()), SLOT(name_cb()) );
-  all->addWidget(name);
+    objname = new QLineEdit(this);
+    connect(objname, SIGNAL(returnPressed()), SLOT(name_cb()));
+    all->addWidget(objname);
 
-  Q3BoxLayout *down =  new Q3HBoxLayout(all,4);
-  
-  add = new QPushButton("&Add",this);
-  connect( add, SIGNAL(clicked()), SLOT(add_cb()) );
-  down->addWidget(add);
-  del = new QPushButton("&Delete",this);
-  connect( del, SIGNAL(clicked()), SLOT(del_cb()) );
-  down->addWidget(del);
+    QBoxLayout *down =  new QHBoxLayout(this);
+    all->addLayout(down);
 
-  QLabel *label = new QLabel("Room no:",this);
-  down->addWidget(label);
-  
-  num = new QLineEdit(this);
-  connect( num, SIGNAL(returnPressed()), SLOT(num_cb()) );
-  down->addWidget(num);
+    add = new QPushButton("&Add", this);
+    connect(add, SIGNAL(clicked()), SLOT(add_cb()));
+    down->addWidget(add);
+    del = new QPushButton("&Delete", this);
+    connect(del, SIGNAL(clicked()), SLOT(del_cb()));
+    down->addWidget(del);
 
-  left = new QPushButton("<",this);
-  connect( left, SIGNAL(clicked()), SLOT(left_cb()) );
-  down->addWidget(left);
-  right = new QPushButton(">",this);
-  connect( right, SIGNAL(clicked()), SLOT(right_cb()) );
-  down->addWidget(right);
- 
-  adjustSize();
+    QLabel *label = new QLabel("Room no:", this);
+    down->addWidget(label);
 
-  filename = "";
-  changed=false; 
+    num = new QLineEdit(this);
+    connect(num, SIGNAL(returnPressed()), SLOT(num_cb()));
+    down->addWidget(num);
+
+    left = new QPushButton("<", this);
+    connect(left, SIGNAL(clicked()), SLOT(left_cb()));
+    down->addWidget(left);
+    right = new QPushButton(">", this);
+    connect(right, SIGNAL(clicked()), SLOT(right_cb()));
+    down->addWidget(right);
+
+    adjustSize();
+
+    filename = "";
+    changed = false;
 }
 
 //*****************************************
 void ObjEdit::open()
 {
-
-  sprintf(tmp,"%s/object",game->dir.c_str());  
-  open(tmp);
-  show();
-
+    sprintf(tmp, "%s/object", game->dir.c_str());
+    open(tmp);
+    show();
 }
 
 //*****************************************
 void ObjEdit::deinit()
 {
-  delete objlist;
-  winlist[winnum].type=-1;
-  if(window_list && window_list->isVisible())window_list->draw();
-}
-
-
-//*********************************************
-void ObjEdit::hideEvent( QHideEvent * )
-{
-
-  if(window_list && window_list->isVisible())window_list->draw();
-
+    delete objlist;
+    winlist[winnum].type = -1;
+    if (window_list && window_list->isVisible())
+        window_list->draw();
 }
 
 //*********************************************
-void ObjEdit::showEvent( QShowEvent * )
+void ObjEdit::hideEvent(QHideEvent *)
 {
+    if (window_list && window_list->isVisible())
+        window_list->draw();
+}
 
-  if(window_list && window_list->isVisible())window_list->draw();
-
+//*********************************************
+void ObjEdit::showEvent(QShowEvent *)
+{
+    if (window_list && window_list->isVisible())
+        window_list->draw();
 }
 
 //*****************************************
-void ObjEdit::closeEvent( QCloseEvent *e )
+void ObjEdit::closeEvent(QCloseEvent *e)
 {
-  
-  if(changed){      
-    switch ( QMessageBox::warning( this, "ObjEdit",
-                                   "Save changes to OBJECT file ?",
-                                   "Yes",
-                                   "No",
-                                   "Cancel",
-                                   0, 2) ) {
-    case 0: // yes
-      save_file();
-      deinit();
-      e->accept();
-      break;
-    case 1: // no
-      deinit();
-      e->accept();
-      break;
-    default: // cancel
-      e->ignore();
-      break;
-    }        
-  }
-  else{
-    deinit();
-    e->accept();
-  }
-
+    if (changed) {
+        switch (QMessageBox::warning(this, "ObjEdit",
+                                     "Save changes to OBJECT file ?",
+                                     "Yes",
+                                     "No",
+                                     "Cancel",
+                                     0, 2)) {
+            case 0: // yes
+                save_file();
+                deinit();
+                e->accept();
+                break;
+            case 1: // no
+                deinit();
+                e->accept();
+                break;
+            default: // cancel
+                e->ignore();
+                break;
+        }
+    } else {
+        deinit();
+        e->accept();
+    }
 }
 
 //*****************************************
 void ObjEdit::open(char *name)
 {
-  int ret = objlist->read(name,false);
-  if(ret)return;
+    int ret = objlist->read(name, false);
+    if (ret)
+        return;
 
-  filename = name;
-  
-  list->clear();
-  for(int i=0;i<objlist->ItemNames.num;i++){
-    sprintf(tmp,"%d. %s",i,objlist->ItemNames.at(i).c_str());
-     list->insertItem(tmp);
-  }
-  list->show();  
-  list->setCurrentItem(0);
-  changed=false;
+    filename = name;
 
+    list->clear();
+    for (int i = 0; i < objlist->ItemNames.num; i++) {
+        sprintf(tmp, "%d. %s", i, objlist->ItemNames.at(i).c_str());
+        list->addItem(tmp);
+    }
+    list->show();
+    list->setCurrentItem(0);
+    changed = false;
 }
 
 //*****************************************
 void ObjEdit::open_file()
 {
-
-  Q3FileDialog *f = new Q3FileDialog(0,"Open",true);  
-  const char *filters[] = {"object","All files (*)",NULL};
-  
-  f->setFilters(filters);
-  f->setCaption("Open");
-  f->setMode(Q3FileDialog::ExistingFile);
-  f->setDir(game->dir.c_str());
-  if ( f->exec() == QDialog::Accepted ) {
-    if ( !f->selectedFile().isEmpty() )
-      open((char *)f->selectedFile().latin1());
-  }
+    QString filename = QFileDialog::getOpenFileName(this, tr("Open Object"), game->dir.c_str(), tr("Object Files (object);;All Files (*)"));
+    if (!filename.isNull())
+        open(filename.toLatin1().data());
 }
 
 //*****************************************
 void ObjEdit::save_file()
 {
-  if(filename==""){
-    save_as_file();
-  }
-  else{
-    objlist->save((char *)filename.c_str(),options->isItemChecked(encrypted));
-    changed=false;
-  }
+    if (filename == "")
+        save_as_file();
+    else {
+        objlist->save((char *)filename.c_str(), encrypted->isChecked());
+        changed = false;
+    }
 }
 
 //*****************************************
 void ObjEdit::save_as_file()
 {
-
-  Q3FileDialog *f = new Q3FileDialog(0,"Save",true);  
-  const char *filters[] = {"object","All files (*)",NULL};
-  
-  f->setFilters(filters);
-  f->setCaption("Save");
-  f->setMode(Q3FileDialog::AnyFile);
-  f->setDir(game->dir.c_str());
-  if ( f->exec() == QDialog::Accepted ) {
-    if ( !f->selectedFile().isEmpty() ){
-      objlist->save((char *)f->selectedFile().latin1(),options->isItemChecked(encrypted));
-      changed=false;
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save Object"), filename.c_str(), tr("Object Files (object);;All Files (*)"));
+    if (!fileName.isNull()) {
+        objlist->save(fileName.toLatin1().data(), encrypted->isChecked());
+        changed = false;
     }
-  }
 }
 
 //*****************************************
 void ObjEdit::new_file()
 {
-
-  objlist->clear();
-  CurObject = 0;
-  list->clear();
-  list->insertItem("0. ?");
-  list->setCurrentItem(CurObject);    
-  changed=false;
+    objlist->clear();
+    CurObject = 0;
+    list->clear();
+    list->addItem("0. ?");
+    list->setCurrentRow(CurObject);
+    changed = false;
 }
 
 //*****************************************
-void ObjEdit::select_object(int n)
+void ObjEdit::select_object()
 {
-  name->setText(objlist->ItemNames.at(n).c_str());
-  sprintf(tmp,"%d",objlist->RoomNum[n]);
-  num->setText(tmp);
-  CurObject = n;
+    int n = list->currentRow();
+    objname->setText(objlist->ItemNames.at(n).c_str());
+    sprintf(tmp, "%d", objlist->RoomNum[n]);
+    num->setText(tmp);
+    CurObject = n;
 }
 
 //*****************************************
 void ObjEdit::add_cb()
 {
-
-  objlist->ItemNames.add("?");  
-  CurObject = objlist->ItemNames.num-1;
-  objlist->RoomNum[CurObject]=0;
-  sprintf(tmp,"%d. ?",CurObject);
-  list->insertItem(tmp);
-  list->setCurrentItem(CurObject);  
-  changed=true;
-
+    objlist->ItemNames.add("?");
+    CurObject = objlist->ItemNames.num - 1;
+    objlist->RoomNum[CurObject] = 0;
+    sprintf(tmp, "%d. ?", CurObject);
+    list->addItem(tmp);
+    list->setCurrentRow(CurObject);
+    changed = true;
 }
 
 //*****************************************
 void ObjEdit::del_cb()
 {
-
-  objlist->ItemNames.replace(CurObject,"?");
-  sprintf(tmp,"%d. ?",CurObject);
-  list->changeItem(tmp,CurObject);
-  changed=true;
+    objlist->ItemNames.replace(CurObject, "?");
+    sprintf(tmp, "%d. ?", CurObject);
+    auto item = list->item(CurObject);
+    item->setText(tmp);
+    changed = true;
 }
 
 //*****************************************
 void ObjEdit::left_cb()
 {
-
-  if(objlist->RoomNum[CurObject]>0){
-    objlist->RoomNum[CurObject]--;
-    sprintf(tmp,"%d",objlist->RoomNum[CurObject]);
-    num->setText(tmp);
-    changed=true;
-  }
-
+    if (objlist->RoomNum[CurObject] > 0) {
+        objlist->RoomNum[CurObject]--;
+        sprintf(tmp, "%d", objlist->RoomNum[CurObject]);
+        num->setText(tmp);
+        changed = true;
+    }
 }
 
 //*****************************************
 void ObjEdit::right_cb()
 {
-
-  if(objlist->RoomNum[CurObject]<255){  
-    objlist->RoomNum[CurObject]++;
-    sprintf(tmp,"%d",objlist->RoomNum[CurObject]);
-    num->setText(tmp);
-    changed=true;
-  }
-
+    if (objlist->RoomNum[CurObject] < 255) {
+        objlist->RoomNum[CurObject]++;
+        sprintf(tmp, "%d", objlist->RoomNum[CurObject]);
+        num->setText(tmp);
+        changed = true;
+    }
 }
 
 //*****************************************
 void ObjEdit::num_cb()
 {
-
-  char *str = (char *)num->text().latin1(); 
-  int k = atoi(str);
-  if(!strcmp(str,"0") || (k>0&&k<256) ){
-    objlist->RoomNum[CurObject] = k;
-    changed=true;
-  }
-  else{
-    sprintf(tmp,"%d",objlist->RoomNum[CurObject]);
-    num->setText(tmp);    
-  }
+    char *str = num->text().toLatin1().data();
+    int k = num->text().toInt();
+    if (!strcmp(str, "0") || (k > 0 && k < 256)) {
+        objlist->RoomNum[CurObject] = k;
+        changed = true;
+    } else {
+        sprintf(tmp, "%d", objlist->RoomNum[CurObject]);
+        num->setText(tmp);
+    }
 }
 
 //*****************************************
 void ObjEdit::name_cb()
 {
-
-  char *str = (char *)name->text().latin1(); 
-  objlist->ItemNames.replace(CurObject,str);  
-  sprintf(tmp,"%d. %s",CurObject,str);
-  list->changeItem(tmp,CurObject);
-  changed=true;
+    std::string str = objname->text().toStdString();
+    objlist->ItemNames.replace(CurObject, str.c_str());
+    sprintf(tmp, "%d. %s", CurObject, str.c_str());
+    auto item = list->item(CurObject);
+    item->setText(tmp);
+    changed = true;
 }
-
-//*****************************************
-void ObjEdit::encrypted_cb()
-{
-
-  options->setItemChecked(encrypted,!options->isItemChecked(encrypted));
-
-}
-//*****************************************

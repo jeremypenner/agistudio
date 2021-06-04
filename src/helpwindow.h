@@ -11,59 +11,61 @@
 #ifndef HELPWINDOW_H
 #define HELPWINDOW_H
 
-#include <q3textbrowser.h>
-#include <q3mainwindow.h>
-#include <qstringlist.h>
-#include <qmap.h>
-#include <qdir.h>
-//Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QTextBrowser>
+#include <QMainWindow>
+#include <QStringList>
+#include <QMap>
+#include <QDir>
 #include <QShowEvent>
 #include <QHideEvent>
 #include <QEvent>
 
-class QComboBox;
-class Q3PopupMenu;
+#ifdef _WIN32
+#include <windows.h>
+#endif
 
-class HelpWindow : public Q3MainWindow
+class QComboBox;
+class QMenu;
+
+class HelpWindow : public QMainWindow
 {
     Q_OBJECT
 public:
-    HelpWindow( const QString& home_,  const QString& path, QWidget* parent = 0, const char *name=0 );
+    HelpWindow(const QString &home_,  const QString &path, QWidget *parent = 0, const char *name = 0);
     ~HelpWindow();
     void setSource(char *filename);
 private slots:
-    void setBackwardAvailable( bool );
-    void setForwardAvailable( bool );
+    void setBackwardAvailable(bool);
+    void setForwardAvailable(bool);
 
     void textChanged();
     void openFile();
     void newWindow();
 
-    void pathSelected( const QString & );
-    void histChosen( int );
-    void bookmChosen( int );
+    void pathSelected(const QString &);
+    void histChosen(int);
+    void bookmChosen(int);
     void addBookmark();
-    void showEvent(  QShowEvent * );
-    void hideEvent(  QHideEvent * );  
-    
+    void showEvent(QShowEvent *);
+    void hideEvent(QHideEvent *);
+
 private:
-    bool eventFilter( QObject * o, QEvent * e );
+    bool eventFilter(QObject *o, QEvent *e);
     void readHistory();
     void readBookmarks();
-    
-    Q3TextBrowser* browser;
+
+    QTextBrowser *browser;
     QComboBox *pathCombo;
-    int backwardId, forwardId;
+    QAction *backwardAction, *forwardAction;
     QString selectedURL;
     QDir path;
     QStringList fileList, history, bookmarks;
     QMap<int, QString> mHistory, mBookmarks;
-    Q3PopupMenu *hist, *bookm;
+    QMenu *hist, *bookm;
 };
 
 
-extern HelpWindow *helpwindow,*helpwindow1;
+extern HelpWindow *helpwindow, *helpwindow1;
 
 
 #endif

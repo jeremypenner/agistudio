@@ -22,19 +22,16 @@
 #define RESOURCES_H
 
 #include <string>
-#include <qwidget.h>
-#include <qlabel.h>
-#include <q3listbox.h> 
-#include <qcombobox.h>
-#include <qlayout.h>
-#include <qlineedit.h>
-#include <q3buttongroup.h>
-//Added by qt3to4:
+#include <QWidget>
+#include <QLabel>
+#include <QComboBox>
+#include <QLayout>
+#include <QLineEdit>
+#include <QButtonGroup>
 #include <QShowEvent>
 #include <QHideEvent>
 #include <QCloseEvent>
-#include <Q3PopupMenu>
-
+#include <QListWidget>
 
 #include "preview.h"
 
@@ -45,16 +42,16 @@ class AddResource : public QWidget
 {
     Q_OBJECT
 public:
-    AddResource( QWidget *parent=0, const char *name=0 , ResourcesWin *res=0);
-    
+    AddResource(QWidget *parent = 0, const char *name = 0, ResourcesWin *res = 0);
+
     QLabel *filename;
-    QLabel *name;
+    QLabel *resname;
     QLineEdit *number;
-    Q3ButtonGroup *type;
+    QButtonGroup *type;
     ResourcesWin *resources_win;
     Preview *preview;
     int restype;
-    string file;
+    std::string file;
     void open(char *filename);
 public slots:
     void ok_cb();
@@ -64,22 +61,23 @@ public slots:
 };
 
 
-
 class ResourcesWin : public QWidget
 {
     Q_OBJECT
 public:
-    ResourcesWin( QWidget* parent = 0, const char*  name=0, int winnum=0);
-    Q3ListBox *list;
+    ResourcesWin(QWidget *parent = 0, const char  *name = 0, int winnum = 0);
+    QListWidget *list;
     int selected;
     int ResourceNum;
     Preview *preview;
     unsigned char ResourceIndex[256];
     bool closing;
 public slots:
-    void select_resource_type( int i);
-    void highlight_resource( int i);
-    void select_resource( int i);
+    void select_resource_type(int i);
+    void highlight_resource();
+    void highlight_resource(int i);
+    void select_resource(QListWidgetItem *);
+    void select_resource(int i);
     void set_current(int i);
     void add_resource(void);
     void extract_resource(void);
@@ -89,21 +87,21 @@ public slots:
     void new_resource_window(void);
     void export_resource(void);
     void import_resource(void);
-    
- protected:
+
+protected:
     bool first;
     QLabel *msg;
     QComboBox *type;
     QWidget *previewPane;
     AddResource *addmenu;
-    
-    Q3PopupMenu *resourceMenu;
-    int importMenuItemID;
-    
+
+    QMenu *resourceMenu;
+    QAction *importMenuItemAction;
+
     int winnum;
-    void closeEvent( QCloseEvent *e );
-    void showEvent(  QShowEvent * );
-    void hideEvent(  QHideEvent * );  
+    void closeEvent(QCloseEvent *e);
+    void showEvent(QShowEvent *);
+    void hideEvent(QHideEvent *);
     void deinit();
 };
 

@@ -21,8 +21,8 @@
 #include <cstdlib>
 #include <stdio.h>
 
-#include <qapplication.h>
-#include <q3mainwindow.h>
+#include <QApplication>
+#include <QMainWindow>
 
 #include "menu.h"
 #include "game.h"
@@ -30,8 +30,8 @@
 QApplication *app;
 char tmp[MAX_TMP]; //global temporary buffer
 
-static char help[]=
-"QT AGI Studio v1.1.\n\
+static char help[] =
+    "QT AGI Studio v1.1.\n\
 A Sierra On-Line(tm) adventure game creator and editor.\n\
 \n\
 Usage: agistudio [switches] \n\
@@ -43,38 +43,36 @@ where [switches] are optionally:\n\
 \n";
 
 //***************************************************
-int main( int argc, char **argv )
+int main(int argc, char **argv)
 {
-  char *gamedir=NULL;
+    char *gamedir = NULL;
 
-  tmp[0]=0;
+    tmp[0] = 0;
 
-  for(int i=1;i<argc;i++){
-    if(argv[i][0] == '-'){
-      if(!strcmp(argv[i]+1,"dir")){
-        gamedir = argv[i+1];
-      }
-      else
-      {
-        if(strcmp(argv[i]+1,"help")!=0 && strcmp(argv[i]+1,"-help")!=0)
-          printf( "Unknown parameter.\n\n" );
-        printf("%s", help);
-        exit(-2);
-      }
+    for (int i = 1; i < argc; i++) {
+        if (argv[i][0] == '-') {
+            if (!strcmp(argv[i] + 1, "dir"))
+                gamedir = argv[i + 1];
+            else {
+                if (strcmp(argv[i] + 1, "help") != 0 && strcmp(argv[i] + 1, "-help") != 0)
+                    printf("Unknown parameter.\n\n");
+                printf("%s", help);
+                exit(-2);
+            }
+        }
     }
-  }
 
-  app = new QApplication(argc,argv);
-  menu = new Menu(NULL,NULL);
-  app->setMainWidget( menu );
+    app = new QApplication(argc, argv);
+    menu = new Menu(NULL, NULL);
 
-  game = new Game();
+    game = new Game();
 
-  menu->show();
+    menu->show();
 
-  if(gamedir){
-    int err = game->open(gamedir);
-    if(!err)menu->show_resources();
-  }
-  return app->exec();
+    if (gamedir) {
+        int err = game->open(gamedir);
+        if (!err)
+            menu->show_resources();
+    }
+    return app->exec();
 }

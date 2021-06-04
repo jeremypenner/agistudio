@@ -20,9 +20,3 @@
 
 typedef unsigned char byte;
 
-#ifndef __GNUC__
-using namespace std;
-#endif
-
-namespace Qt {}
-using namespace Qt;
